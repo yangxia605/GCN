@@ -6,6 +6,7 @@ import networkx as nx # Visualize the graph
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 
 # Step 2:Creating  a toy graph in DGL
 def build_toy_graph():
@@ -122,21 +123,26 @@ for eopch in range(30):
 
     print('Epoch %d | Loss: %.4f' % (eopch, loss.item()))
 # Step 7: Visualize
-def draw (i):
-    cls1color = '#00FFFF'
-    cls2color = '#FF00FF'
-    pos = {}
-    colors = []
-    for v in range(34):
-        pos[v] = all_logits[i][v].numpy()
-        cls = pos[v].argmax()
-        colors.append(cls1color if cls else cls2color)
-    ax.cla()
-    ax.axis('off')
-    ax.set_title('Epoch: %d' % i)
-    nx.draw_networkx(nx_G.to_undirected(), pos, node_color = colors,with_labels=True,node_size = 300,ax=ax)
-fig = plt.figure(dpi=150)
-fig.clf()
-ax = fig.subplots()
-draw(0) # draw the prediction of the first epoch
-plt.close()
+# def draw (i):
+#     cls1color = '#00FFFF'
+#     cls2color = '#FF00FF'
+#     pos = {}
+#     colors = []
+#     for v in range(34):
+#         pos[v] = all_logits[i][v].numpy()
+#         cls = pos[v].argmax()
+#         colors.append(cls1color if cls else cls2color)
+#     ax.cla()
+#     ax.axis('off')
+#     ax.set_title('Epoch: %d' % i)
+#     nx.draw_networkx(nx_G.to_undirected(), pos, node_color = colors,with_labels=True,node_size = 300,ax=ax)
+# fig = plt.figure(dpi=150)
+# fig.clf()
+# ax = fig.subplots()
+# draw(0) # draw the prediction of the first epoch
+# plt.close()
+last_epoch = all_logits[29].detach().numpy()
+predicated_class = np.argmax(last_epoch,axis=1)
+color = np.where(predicated_class==0,'c','r')
+
+nx.draw_networkx(nx_G,pos,node_color=color,with_labels=True,node_size=300)
